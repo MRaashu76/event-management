@@ -210,7 +210,7 @@ const SITE = {
         { text: "Experience", href: "#categories" },
       ],
     },
-    { text: "About Us", href: "#about" },
+    { text: "About Us", href: "#abou" },
     { text: "Contact",  href: "#newsletter" },
   ],
   navCTA: { text: "Buy Tickets", href: "#shows" },
