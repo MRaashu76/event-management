@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title><!-- Updated dynamically by script.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVBAR — populated by buildNav() -->
+  <nav id="navbar"></nav>
+
+  <!-- ANIMATED BACKGROUND CANVAS -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- HERO — populated by buildHero() -->
+  <section id="hero">
+    <div class="hero-orb-3"></div>
+    <div class="hero-orb-4"></div>
+    <div class="hero-rings">
+      <div class="hero-ring"></div>
+      <div class="hero-ring"></div>
+      <div class="hero-ring"></div>
+      <div class="hero-ring"></div>
+    </div>
+  </section>
+
+  <!-- TICKER — populated by buildTicker() -->
+  <div class="ticker">
+    <div class="ticker-inner"></div>
+  </div>
+
+  <!-- UPCOMING SHOWS — populated by buildShows() -->
+  <section id="shows">
+    <div class="section-label">New Experiences</div>
+    <h2 class="section-title">Upcoming Shows</h2>
+    <div class="shows-list"></div>
+  </section>
+
+  <!-- ABOUT — populated by buildAbout() -->
+  <section id="about">
+    <div class="about-inner">
+      <div class="about-text" id="about-text"></div>
+      <div class="about-visual">
+        <div class="about-ring"></div>
+        <div class="about-ring"></div>
+        <div class="about-ring"></div>
+        <div class="about-center">EVENT</div>
+      </div>
+    </div>
+    <div class="stats-row"></div>
+  </section>
+
+  <!-- GALLERY — populated by buildGallery() -->
+  <section id="gallery">
+    <div style="max-width:1200px;margin:0 auto">
+      <div class="section-label">Memories</div>
+      <h2 class="section-title">Gallery</h2>
+    </div>
+    <div class="gallery-grid"></div>
+    <div style="text-align:center;margin-top:50px">
+      <a href="#" class="btn-outline">View Full Gallery</a>
+    </div>
+  </section>
+
+  <!-- ARTISTS — populated by buildArtists() -->
+  <section id="artists">
+    <div style="max-width:1200px;margin:0 auto">
+      <div class="section-label">Lineup</div>
+      <h2 class="section-title">Featured Artists</h2>
+    </div>
+    <div class="artists-grid"></div>
+    <div style="text-align:center;margin-top:50px">
+      <a href="#" class="btn-outline">View All Artists</a>
+    </div>
+  </section>
+
+  <!-- CATEGORIES — populated by buildCategories() -->
+  <section id="categories">
+    <div style="max-width:1200px;margin:0 auto">
+      <div class="section-label">Experiences</div>
+      <h2 class="section-title">What We Offer</h2>
+    </div>
+    <div class="cat-grid"></div>
+  </section>
+
+  <!-- NEWS — populated by buildNews() -->
+  <section id="news">
+    <div class="news-header">
+      <div>
+        <div class="section-label">Our Blog</div>
+        <h2 class="section-title" style="margin-bottom:0">Latest Articles</h2>
+      </div>
+      <a href="#" class="btn-outline">View More</a>
+    </div>
+    <div class="news-grid"></div>
+  </section>
+
+  <!-- NEWSLETTER — populated by buildNewsletter() -->
+  <section id="newsletter">
+    <div class="newsletter-inner"></div>
+  </section>
+
+  <!-- FOOTER — populated by buildFooter() -->
+  <footer>
+    <div class="footer-inner"></div>
+    <div class="footer-bottom"></div>
+  </footer>
+
+  <!-- Load data first, then the page builder -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+
+  <!-- ANIMATED BACKGROUND PARTICLES -->
+  <script>
+  (function() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [], rafId;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Create particles
+    function createParticles() {
+      particles = [];
+      const count = Math.floor((W * H) / 18000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 1.5 + 0.3,
+          alpha: Math.random() * 0.5 + 0.05,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: -(Math.random() * 0.4 + 0.1),
+          twinkle: Math.random() * Math.PI * 2,
+          twinkleSpeed: Math.random() * 0.02 + 0.005,
+          color: Math.random() > 0.7
+            ? `rgba(255,${Math.floor(Math.random()*80+40)},0,`
+            : `rgba(255,${Math.floor(Math.random()*60+180)},${Math.floor(Math.random()*60+180)},`,
+        });
+      }
+    }
+    createParticles();
+    window.addEventListener('resize', createParticles);
+
+    // Shooting stars
+    let stars = [];
+    function spawnStar() {
+      if (Math.random() > 0.015) return;
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H * 0.5,
+        len: Math.random() * 100 + 80,
+        speed: Math.random() * 6 + 4,
+        alpha: 1,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Draw particles
+      particles.forEach(p => {
+        p.twinkle += p.twinkleSpeed;
+        const a = p.alpha * (0.6 + 0.4 * Math.sin(p.twinkle));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + a + ')';
+        ctx.fill();
+
+        // Move
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around
+        if (p.y < -5) p.y = H + 5;
+        if (p.x < -5) p.x = W + 5;
+        if (p.x > W + 5) p.x = -5;
+      });
+
+      // Draw shooting stars
+      spawnStar();
+      stars = stars.filter(s => s.alpha > 0.02);
+      stars.forEach(s => {
+        const dx = Math.cos(s.angle) * s.len;
+        const dy = Math.sin(s.angle) * s.len;
+        const grad = ctx.createLinearGradient(s.x, s.y, s.x - dx, s.y - dy);
+        grad.addColorStop(0, `rgba(255,120,0,${s.alpha})`);
+        grad.addColorStop(1, 'rgba(255,60,0,0)');
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x - dx, s.y - dy);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        s.x += Math.cos(s.angle) * s.speed;
+        s.y += Math.sin(s.angle) * s.speed;
+        s.alpha *= 0.96;
+      });
+
+      // Draw connection lines between nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(255,60,0,${0.04 * (1 - dist/100)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      rafId = requestAnimationFrame(draw);
+    }
+
+    draw();
+  })();
+  </script>
+</body>
+</html>
